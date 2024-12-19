@@ -1,10 +1,6 @@
 import logging
 from typing import Any, Dict, Iterator, List, Optional, Union
 
-from langchain_community.adapters.openai import (
-    convert_dict_to_message,
-    convert_message_to_dict,
-) 
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import (
@@ -14,6 +10,11 @@ from langchain_core.messages import (
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
 from langchain_core.utils import get_from_dict_or_env
 from pydantic import BaseModel, ConfigDict, model_validator
+
+from utils import (
+    convert_dict_to_message,
+    convert_message_to_dict,
+)
 
 logger = logging.getLogger(__name__)
 

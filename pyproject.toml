@@ -1,20 +1,20 @@
-[build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
-
-[project]
+[tool.poetry]
 name = "langchain-predictionguard"
-authors = [{name = "Jacob Mansdorfer", email = "jacob@predictionguard.com"}]
-readme = "README.md"
-license = {file = "LICENSE"}
-classifiers = ["License :: OSI Approved :: MIT License"]
-dynamic = ["version", "description"]
-description-file = "README.md"
-dependencies = [
-    "predictionguard<3.0.0,>=2.7.0",
-    "langchain-core<0.4.0,>=0.3.25",
-    "langchain-community<0.4.0,>=0.3.12"
+version = "0.0.10"
+description = "Create controlled and compliant AI systems with PredictionGuard and LangChain"
+authors = [
+    "Jacob Mansdorfer <jacob@predictionguard.com>"
 ]
+readme = "README.md"
+license = "MIT License"
+repository = "https://www.github.com/predictionguard/langchain-predictionguard"
+homepage = "https://predictionguard.com"
 
-[project.urls]
-Home = "https://predictionguard.com"
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+langchain-core = "^0.3.27"
+predictionguard = "^2.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
