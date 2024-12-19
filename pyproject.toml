@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "langchain-predictionguard"
-version = "0.0.10"
+version = "0"
 description = "Create controlled and compliant AI systems with PredictionGuard and LangChain"
 authors = [
     "Jacob Mansdorfer <jacob@predictionguard.com>"
@@ -20,6 +20,9 @@ ruff = "^0.8.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.4"
+
+[tool.poetry-version-plugin]
+source = "init"
 
 [build-system]
 requires = ["poetry-core"]
