@@ -11,7 +11,7 @@ from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResu
 from langchain_core.utils import get_from_dict_or_env
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from utils import (
+from .utils import (
     convert_dict_to_message,
     convert_message_to_dict,
 )

@@ -1,6 +1,6 @@
 """Create controlled and compliant AI systems with PredictionGuard and LangChain"""
-from .PredictionGuard import PredictionGuard
-from .ChatPredictionGuard import ChatPredictionGuard
-from .PredictionGuardEmbeddings import PredictionGuardEmbeddings
+from .PredictionGuard import PredictionGuard as PredictionGuard
+from .ChatPredictionGuard import ChatPredictionGuard as ChatPredictionGuard
+from .PredictionGuardEmbeddings import PredictionGuardEmbeddings as PredictionGuardEmbeddings
 
-__version__ = "0.0.8"
+__version__ = "0.1.1"

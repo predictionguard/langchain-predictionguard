@@ -6,7 +6,7 @@ from langchain_core.language_models.llms import LLM
 from langchain_core.utils import get_from_dict_or_env
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from utils import enforce_stop_tokens
+from .utils import enforce_stop_tokens
 
 logger = logging.getLogger(__name__)
 
