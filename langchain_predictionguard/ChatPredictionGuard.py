@@ -1,15 +1,33 @@
 import logging
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Type,
+    Union,
+)
 
 from langchain_core.callbacks import CallbackManagerForLLMRun
+from langchain_core.language_models import LanguageModelInput
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import (
     AIMessageChunk,
     BaseMessage,
 )
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
+from langchain_core.runnables import Runnable
 from langchain_core.utils import get_from_dict_or_env
-from pydantic import BaseModel, ConfigDict, model_validator
+from langchain_core.utils.function_calling import (
+    convert_to_openai_function,
+    convert_to_openai_tool,
+)
+from langchain_core.tools import BaseTool
+from pydantic import BaseModel, ConfigDict, model_validator, Field
 
 from .utils import (
     convert_dict_to_message,
@@ -39,31 +57,115 @@ class ChatPredictionGuard(BaseChatModel):
 
     model: Optional[str] = "Hermes-3-Llama-3.1-8B"
     """Model name to use."""
-
     max_tokens: Optional[int] = 256
     """The maximum number of tokens in the generated completion."""
-
+    logit_bias: Optional[dict[int, int]] = None
+    """Modify the likelihood of specified tokens appearing in the completion."""
+    presence_penalty: Optional[float] = None
+    """Penalizes repeated tokens."""
+    frequency_penalty: Optional[float] = None
+    """Penalizes repeated tokens according to frequency."""
     temperature: Optional[float] = 0.75
     """The temperature parameter for controlling randomness in completions."""
-
     top_p: Optional[float] = 0.1
     """The diversity of the generated text based on nucleus sampling."""
-
     top_k: Optional[int] = None
     """The diversity of the generated text based on top-k sampling."""
-
-    stop: Optional[List[str]] = None
-
+    stop: Optional[Union[list[str], str]] = Field(default=None, alias="stop_sequences")
+    """Default stop sequences."""
     predictionguard_input: Optional[Dict[str, Union[str, bool]]] = None
     """The input check to run over the prompt before sending to the LLM."""
-
     predictionguard_output: Optional[Dict[str, bool]] = None
     """The output check to run the LLM output against."""
-
     predictionguard_api_key: Optional[str] = None
     """Prediction Guard API key."""
 
     model_config = ConfigDict(extra="forbid")
+
+    def bind_tools(
+        self,
+        tools: Sequence[Union[dict[str, Any], type, Callable, BaseTool]],
+        *,
+        tool_choice: Optional[
+            Union[dict, str, Literal["auto", "none", "required", "any"], bool]
+        ] = None,
+        strict: Optional[bool] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> Runnable[LanguageModelInput, BaseMessage]:
+        """Bind tool-like objects to this chat model.
+
+        Assumes model is compatible with OpenAI tool-calling API.
+
+        Args:
+            tools: A list of tool definitions to bind to this chat model.
+                Supports any tool definition handled by
+                :meth:`langchain_core.utils.function_calling.convert_to_openai_tool`.
+            tool_choice: Which tool to require the model to call. Options are:
+
+                - str of the form ``"<<tool_name>>"``: calls <<tool_name>> tool.
+                - ``"auto"``: automatically selects a tool (including no tool).
+                - ``"none"``: does not call a tool.
+                - ``"any"`` or ``"required"`` or ``True``: force at least one tool to be called.
+                - dict of the form ``{"type": "function", "function": {"name": <<tool_name>>}}``: calls <<tool_name>> tool.
+                - ``False`` or ``None``: no effect, default OpenAI behavior.
+            strict: If True, model output is guaranteed to exactly match the JSON Schema
+                provided in the tool definition. If True, the input schema will be
+                validated according to
+                https://platform.openai.com/docs/guides/structured-outputs/supported-schemas.
+                If False, input schema will not be validated and model output will not
+                be validated.
+                If None, ``strict`` argument will not be passed to the model.
+            parallel_tool_calls: Set to ``False`` to disable parallel tool use.
+                Defaults to ``None`` (no specification, which allows parallel tool use).
+            kwargs: Any additional parameters are passed directly to
+                :meth:`~langchain_openai.chat_models.base.ChatOpenAI.bind`.
+        """  # noqa: E501
+
+        if parallel_tool_calls is not None:
+            kwargs["parallel_tool_calls"] = parallel_tool_calls
+        formatted_tools = [
+            convert_to_openai_tool(tool, strict=strict) for tool in tools
+        ]
+        tool_names = []
+        for tool in formatted_tools:
+            if "function" in tool:
+                tool_names.append(tool["function"]["name"])
+            elif "name" in tool:
+                tool_names.append(tool["name"])
+            else:
+                pass
+        if tool_choice:
+            if isinstance(tool_choice, str):
+                # tool_choice is a tool/function name
+                if tool_choice in tool_names:
+                    tool_choice = {
+                        "type": "function",
+                        "function": {"name": tool_choice},
+                    }
+                elif tool_choice in (
+                    "file_search",
+                    "web_search_preview",
+                    "computer_use_preview",
+                ):
+                    tool_choice = {"type": tool_choice}
+                # 'any' is not natively supported by OpenAI API.
+                # We support 'any' since other models use this instead of 'required'.
+                elif tool_choice == "any":
+                    tool_choice = "required"
+                else:
+                    pass
+            elif isinstance(tool_choice, bool):
+                tool_choice = "required"
+            elif isinstance(tool_choice, dict):
+                pass
+            else:
+                raise ValueError(
+                    f"Unrecognized tool_choice type. Expected str, bool or dict. "
+                    f"Received: {tool_choice}"
+                )
+            kwargs["tool_choice"] = tool_choice
+        return super().bind(tools=formatted_tools, **kwargs)
 
     @property
     def _llm_type(self) -> str:
@@ -100,6 +202,10 @@ class ChatPredictionGuard(BaseChatModel):
             **{
                 "max_tokens": self.max_tokens,
                 "temperature": self.temperature,
+                "presence_penalty": self.presence_penalty,
+                "frequency_penalty": self.frequency_penalty,
+                "logit_bias": self.logit_bias,
+                "stop": self.stop,
                 "top_p": self.top_p,
                 "top_k": self.top_k,
                 "input": (

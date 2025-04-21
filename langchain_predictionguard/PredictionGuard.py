@@ -31,27 +31,25 @@ class PredictionGuard(LLM):
 
     model: Optional[str] = "Hermes-3-Llama-3.1-8B"
     """Model name to use."""
-
     max_tokens: Optional[int] = 256
     """Denotes the number of tokens to predict per generation."""
-
+    presence_penalty: Optional[float] = None
+    """Penalizes repeated tokens."""
+    frequency_penalty: Optional[float] = None
+    """Penalizes repeated tokens according to frequency."""
+    logit_bias: Optional[dict[str, float]] = None
+    """Adjust the probability of specific tokens being generated."""
     temperature: Optional[float] = 0.75
     """A non-negative float that tunes the degree of randomness in generation."""
-
     top_p: Optional[float] = 0.1
     """A non-negative float that controls the diversity of the generated tokens."""
-
     top_k: Optional[int] = None
     """The diversity of the generated text based on top-k sampling."""
-
     stop: Optional[List[str]] = None
-
     predictionguard_input: Optional[Dict[str, Union[str, bool]]] = None
     """The input check to run over the prompt before sending to the LLM."""
-
     predictionguard_output: Optional[Dict[str, bool]] = None
     """The output check to run the LLM output against."""
-
     predictionguard_api_key: Optional[str] = None
     """Prediction Guard API key."""
 
