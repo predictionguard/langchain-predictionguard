@@ -2,7 +2,7 @@
 
 import pytest
 
-from langchain_community.llms.predictionguard import PredictionGuard
+from langchain_predictionguard import PredictionGuard
 
 
 def test_predictionguard_invoke() -> None:
