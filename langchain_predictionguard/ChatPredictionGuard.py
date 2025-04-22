@@ -219,7 +219,6 @@ class ChatPredictionGuard(BaseChatModel):
     def _stream(
         self,
         messages: List[BaseMessage],
-        stop: Optional[List[str]] = None,
         run_manager: Optional[CallbackManagerForLLMRun] = None,
         **kwargs: Any,
     ) -> Iterator[ChatGenerationChunk]:
@@ -248,7 +247,6 @@ class ChatPredictionGuard(BaseChatModel):
     def _generate(
         self,
         messages: List[BaseMessage],
-        stop: Optional[List[str]] = None,
         run_manager: Optional[CallbackManagerForLLMRun] = None,
         stream: Optional[bool] = None,
         **kwargs: Any,
