@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "langchain-predictionguard"
-version = "0.1.1"
+version = "0.2.0"
 description = "Create controlled and compliant AI systems with PredictionGuard and LangChain"
 authors = [
     "Jacob Mansdorfer <jacob@predictionguard.com>"
