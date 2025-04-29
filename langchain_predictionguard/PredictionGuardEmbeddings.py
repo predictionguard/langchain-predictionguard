@@ -103,7 +103,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
 
         return response["data"][0]["embedding"]
 
-    def embed_images(self, images: List[str]) -> List[float]:
+    def embed_image(self, images: List[str]) -> List[float]:
         """
         Call out to Prediction Guard's embedding endpoint for embedding multiple images.
 
@@ -133,6 +133,10 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
                 continue
 
         return res
+
+    def embed_images(self, images: List[str]) -> List[float]:
+        return self.embed_image(images)
+
 
     def embed_image_text(self, inputs: List[Dict[str, str]]) -> List[float]:
         """
