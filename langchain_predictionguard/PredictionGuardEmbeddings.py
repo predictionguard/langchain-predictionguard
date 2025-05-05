@@ -83,7 +83,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
                     if emb['index'] == idx:
                         embeddings.append(emb['embedding'])
         else:
-            smaller_batches = [texts[i:i+max_batch_size] for i in range(0, len(text), max_batch_size)]
+            smaller_batches = [texts[i:i+max_batch_size] for i in range(0, len(texts), max_batch_size)]
             embeddings = []
             for smaller_batch in smaller_batches:
                 response = self.client.embeddings.create(
