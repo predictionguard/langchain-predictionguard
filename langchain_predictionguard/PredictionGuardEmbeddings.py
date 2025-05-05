@@ -70,23 +70,33 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
             Embeddings for the texts.
         """
 
-        inputs = []
-        for text in texts:
-            input = {"text": text}
-            inputs.append(input)
+        max_batch_size = 30
+        embeddings = []
+        if len(texts) < max_batch_size:
+            response = self.client.embeddings.create(
+                model=self.model,
+                input=texts,
+                truncate=True
+            )
+            for idx in range(0, len(response["data"])):
+                for emb in response["data"]:
+                    if emb['index'] == idx:
+                        embeddings.append(emb['embedding'])
+        else:
+            smaller_batches = [texts[i:i+max_batch_size] for i in range(0, len(texts), max_batch_size)]
+            embeddings = []
+            for smaller_batch in smaller_batches:
+                response = self.client.embeddings.create(
+                    model=self.model,
+                    input=smaller_batch,
+                    truncate=True
+                )
+                for idx in range(0, len(response["data"])):
+                    for emb in response["data"]:
+                        if emb['index'] == idx:
+                            embeddings.append(emb['embedding'])
 
-        response = self.client.embeddings.create(model=self.model, input=inputs)
-
-        res = []
-        indx = 0
-        for re in response["data"]:
-            if re["index"] == indx:
-                res.append(re["embedding"])
-                indx += 1
-            else:
-                continue
-
-        return res
+        return embeddings
 
     def embed_query(self, text: str) -> List[float]:
         """Call out to Prediction Guard's embedding endpoint for embedding query text.
