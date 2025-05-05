@@ -96,13 +96,6 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
                         if emb['index'] == idx:
                             embeddings.append(emb['embedding'])
 
-        inputs = []
-        for text in texts:
-            input = {"text": text}
-            inputs.append(input)
-
-        response = self.client.embeddings.create(model=self.model, input=inputs)
-
         return embeddings
 
     def embed_query(self, text: str) -> List[float]:
