@@ -1,7 +1,5 @@
 """Test Prediction Guard API wrapper"""
 
-from langchain_core.documents import Document
-
 from langchain_predictionguard import PredictionGuardRerank
 
 
