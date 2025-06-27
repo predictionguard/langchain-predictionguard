@@ -23,7 +23,7 @@ class PredictionGuardRerank(BaseDocumentCompressor):
     predictionguard_api_key: Optional[str] = None
     """Prediction Guard API key."""
 
-    predictionguard_url: Optional[str] = "https://api.predictionguard.com"
+    predictionguard_url: Optional[str] = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(
@@ -38,7 +38,7 @@ class PredictionGuardRerank(BaseDocumentCompressor):
         )
 
         pg_url = get_from_dict_or_env(
-            values, "predictionguard_url", "PREDICTIONGUARD_URL"
+            values, "predictionguard_url", "PREDICTIONGUARD_URL", "https://api.predictionguard.com"
         )
 
         try:

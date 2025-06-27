@@ -33,7 +33,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
     predictionguard_api_key: Optional[str] = None
     """Prediction Guard API key."""
 
-    predictionguard_url: Optional[str] = "https://api.predictionguard.com"
+    predictionguard_url: Optional[str] = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(
@@ -48,7 +48,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
         )
 
         pg_url = get_from_dict_or_env(
-            values, "predictionguard_url", "PREDICTIONGUARD_URL"
+            values, "predictionguard_url", "PREDICTIONGUARD_URL", "https://api.predictionguard.com"
         )
 
         try:

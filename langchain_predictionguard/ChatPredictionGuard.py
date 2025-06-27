@@ -75,7 +75,7 @@ class ChatPredictionGuard(BaseChatModel):
     """The output check to run the LLM output against."""
     predictionguard_api_key: Optional[str] = None
     """Prediction Guard API key."""
-    predictionguard_url: Optional[str] = "https://api.predictionguard.com"
+    predictionguard_url: Optional[str] = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(extra="forbid")
@@ -177,7 +177,7 @@ class ChatPredictionGuard(BaseChatModel):
         )
 
         pg_url = get_from_dict_or_env(
-            values, "predictionguard_url", "PREDICTIONGUARD_URL"
+            values, "predictionguard_url", "PREDICTIONGUARD_URL", "https://api.predictionguard.com"
         )
 
         try:
