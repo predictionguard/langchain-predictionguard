@@ -52,6 +52,8 @@ class PredictionGuard(LLM):
     """The output check to run the LLM output against."""
     predictionguard_api_key: Optional[str] = None
     """Prediction Guard API key."""
+    predictionguard_url: Optional[str] = None
+    """Prediction Guard API URL."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -62,11 +64,16 @@ class PredictionGuard(LLM):
             values, "predictionguard_api_key", "PREDICTIONGUARD_API_KEY"
         )
 
+        pg_url = get_from_dict_or_env(
+            values, "predictionguard_url", "PREDICTIONGUARD_URL", "https://api.predictionguard.com"
+        )
+
         try:
             from predictionguard import PredictionGuard
 
             values["client"] = PredictionGuard(
                 api_key=pg_api_key,
+                url=pg_url,
             )
 
         except ImportError:
