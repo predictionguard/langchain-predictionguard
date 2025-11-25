@@ -1,11 +1,13 @@
 """Test Prediction Guard API wrapper"""
 
+import os
+
 from langchain_predictionguard import PredictionGuardEmbeddings
 
 
 def test_predictionguard_embeddings_documents() -> None:
     """Test Prediction Guard embeddings."""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     documents = [
         "embed this",
     ]
@@ -16,7 +18,7 @@ def test_predictionguard_embeddings_documents() -> None:
 
 def test_predictionguard_embeddings_documents_multiple() -> None:
     """Test Prediction Guard embeddings."""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     documents = [
         "embed me",
         "embed this",
@@ -28,7 +30,7 @@ def test_predictionguard_embeddings_documents_multiple() -> None:
 
 def test_predictionguard_embeddings_query() -> None:
     """Test Prediction Guard embeddings."""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     document = "embed this"
     output = embeddings.embed_query(document)
     assert len(output) > 2
@@ -36,7 +38,7 @@ def test_predictionguard_embeddings_query() -> None:
 
 def test_predictionguard_embeddings_images() -> None:
     """Test Prediction Guard embeddings."""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     image = [
         "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
     ]
@@ -46,7 +48,7 @@ def test_predictionguard_embeddings_images() -> None:
 
 def test_predictionguard_embeddings_images_multiple() -> None:
     """Test Prediction Guard embeddings."""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     images = [
         "https://farm4.staticflickr.com/3300/3497460990_11dfb95dd1_z.jpg",
         "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
@@ -57,7 +59,7 @@ def test_predictionguard_embeddings_images_multiple() -> None:
 
 def test_predictionguard_embeddings_image_text() -> None:
     """Test Prediction Guard Embeddings"""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     inputs = [
         {
             "text": "embed me",
@@ -70,7 +72,7 @@ def test_predictionguard_embeddings_image_text() -> None:
 
 def test_predictionguard_embeddings_image_text_multiple() -> None:
     """Test Prediction Guard Embeddings"""
-    embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+    embeddings = PredictionGuardEmbeddings(model=os.environ["TEST_MULTIMODAL_EMBEDDINGS_MODEL"])
     inputs = [
         {
             "text": "embed me",

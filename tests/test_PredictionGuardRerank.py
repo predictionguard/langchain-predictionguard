@@ -1,10 +1,12 @@
 """Test Prediction Guard API wrapper"""
 
+import os
+
 from langchain_predictionguard import PredictionGuardRerank
 
 
 def test_langchain_cohere_rerank_documents() -> None:
-    rerank = PredictionGuardRerank(model="bge-reranker-v2-m3")
+    rerank = PredictionGuardRerank(model=os.environ["TEST_RERANK_MODEL"])
     test_query = "Test query"
     test_documents = [
         "This is a test document.",

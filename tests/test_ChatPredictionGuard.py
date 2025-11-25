@@ -1,5 +1,7 @@
 """Test Prediction Guard API wrapper."""
 
+import os
+
 import pytest
 
 from langchain_predictionguard import PredictionGuard
@@ -7,14 +9,14 @@ from langchain_predictionguard import PredictionGuard
 
 def test_predictionguard_invoke() -> None:
     """Test valid call to prediction guard."""
-    llm = PredictionGuard(model="Hermes-3-Llama-3.1-8B")  # type: ignore[call-arg]
+    llm = PredictionGuard(model=os.environ["TEST_CHAT_MODEL"])  # type: ignore[call-arg]
     output = llm.invoke("Tell a joke.")
     assert isinstance(output, str)
 
 
 def test_predictionguard_pii() -> None:
     llm = PredictionGuard(
-        model="Hermes-3-Llama-3.1-8B",
+        model=os.environ["TEST_CHAT_MODEL"],
         predictionguard_input={"pii": "block"},
         max_tokens=100,
         temperature=1.0,
