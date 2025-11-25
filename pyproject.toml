@@ -1,26 +1,32 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
 name = "langchain-predictionguard"
 version = "0.3.0"
-description = "Create controlled and compliant AI systems with PredictionGuard and LangChain"
 authors = [
-    "Jacob Mansdorfer <jacob@predictionguard.com>"
+    {name="Jacob Mansdorfer", email="jacob@predictionguard.com"}
 ]
+description = "Create controlled and compliant AI systems with PredictionGuard and LangChain"
+description-file = "README.md"
 readme = "README.md"
-license = "MIT License"
-repository = "https://www.github.com/predictionguard/langchain-predictionguard"
-homepage = "https://predictionguard.com"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: MIT License"]
+dependencies = [
+    "langchain-core>=1.1.0",
+    "predictionguard>=2.9.2",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<4.0"
-langchain-core = "^0.3.27"
-predictionguard = "^2.7.0"
+[project.urls]
+Homepage = "https://predictionguard.com"
+Documentation = "https://docs.langchain.com/oss/python/integrations/providers/predictionguard"
+Repository = "https://github.com/predictionguard/langchain-predictionguard.git"
+Issues = "https://github.com/predictionguard/langchain-predictionguard/issues"
 
-[tool.poetry.group.lint.dependencies]
-ruff = "^0.8.4"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^8.3.4"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
