@@ -15,8 +15,8 @@ requires-python = ">=3.12"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dependencies = [
-    "langchain-core>=1.1.0",
-    "predictionguard>=2.9.2",
+    "langchain-core>=1.2.6",
+    "predictionguard>=2.10.0",
 ]
 
 [project.urls]
@@ -27,6 +27,6 @@ Issues = "https://github.com/predictionguard/langchain-predictionguard/issues"
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "ruff",
+    "pytest>=9.0.2",
+    "ruff>=0.14.10",
 ]
