@@ -15,13 +15,13 @@ requires-python = ">=3.12"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dependencies = [
-    "langchain-core==1.2.30",
+    "langchain-core==1.3.3",
     "predictionguard==2.11.1",
 ]
 
 [tool.uv]
-exclude-newer = "2026-04-16T12:33:43.000+00:00"
-exclude-newer-package = { predictionguard = "2026-05-04T19:45:44.44Z", markupsafe = false }
+exclude-newer = "2026-05-08T12:33:43.000+00:00"
+exclude-newer-package = { idna = "2026-05-13T19:45:44.44Z", lanmarkupsafe = false }
 
 [tool.uv.pip]
 require-hashes = true
@@ -35,5 +35,5 @@ Issues = "https://github.com/predictionguard/langchain-predictionguard/issues"
 [project.optional-dependencies]
 dev = [
     "pytest==9.0.3",
-    "ruff==0.15.10",
+    "ruff==0.15.12",
 ]
