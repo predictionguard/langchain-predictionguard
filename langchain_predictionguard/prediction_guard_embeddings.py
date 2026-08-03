@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from langchain_core.embeddings import Embeddings
 from langchain_core.utils import get_from_dict_or_env
@@ -27,13 +27,13 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
     client: Any = None  #: :meta private:
     """Prediction Guard Client"""
 
-    model: Optional[str] = "bridgetower-large-itm-mlm-itc"
+    model: str | None = "bridgetower-large-itm-mlm-itc"
     """Model name to use."""
 
-    predictionguard_api_key: Optional[str] = None
+    predictionguard_api_key: str | None = None
     """Prediction Guard API key."""
 
-    predictionguard_url: Optional[str] = None
+    predictionguard_url: str | None = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(
@@ -41,7 +41,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
     )
 
     @model_validator(mode="before")
-    def validate_environment(cls, values: Dict) -> Dict:
+    def validate_environment(cls, values: dict) -> dict:
         """Validate that the api_key and python package exists in environment."""
         pg_api_key = get_from_dict_or_env(
             values, "predictionguard_api_key", "PREDICTIONGUARD_API_KEY"
@@ -67,7 +67,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
 
         return values
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Call out to Prediction Guard's embedding endpoint for embedding documents.
 
         Args:
@@ -86,7 +86,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
                 input=texts,
                 truncate=True
             )
-            for idx in range(0, len(response["data"])):
+            for idx in range(len(response["data"])):
                 for emb in response["data"]:
                     if emb['index'] == idx:
                         embeddings.append(emb['embedding'])
@@ -99,14 +99,14 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
                     input=smaller_batch,
                     truncate=True
                 )
-                for idx in range(0, len(response["data"])):
+                for idx in range(len(response["data"])):
                     for emb in response["data"]:
                         if emb['index'] == idx:
                             embeddings.append(emb['embedding'])
 
         return embeddings
 
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         """Call out to Prediction Guard's embedding endpoint for embedding query text.
 
         Args:
@@ -121,7 +121,7 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
 
         return response["data"][0]["embedding"]
 
-    def embed_image(self, images: List[str]) -> List[float]:
+    def embed_image(self, images: list[str]) -> list[float]:
         """
         Call out to Prediction Guard's embedding endpoint for embedding multiple images.
 
@@ -152,11 +152,11 @@ class PredictionGuardEmbeddings(BaseModel, Embeddings):
 
         return res
 
-    def embed_images(self, images: List[str]) -> List[float]:
+    def embed_images(self, images: list[str]) -> list[float]:
         return self.embed_image(images)
 
 
-    def embed_image_text(self, inputs: List[Dict[str, str]]) -> List[float]:
+    def embed_image_text(self, inputs: list[dict[str, str]]) -> list[float]:
         """
         Call out to Prediction Guard embeddings for embedding an image and text.
 

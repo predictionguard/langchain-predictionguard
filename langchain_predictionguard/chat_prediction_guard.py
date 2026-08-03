@@ -1,14 +1,8 @@
 import logging
+from collections.abc import Callable, Iterator, Sequence
 from typing import (
     Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
     Literal,
-    Optional,
-    Sequence,
-    Union,
 )
 
 from langchain_core.callbacks import CallbackManagerForLLMRun
@@ -20,10 +14,10 @@ from langchain_core.messages import (
 )
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
 from langchain_core.runnables import Runnable
+from langchain_core.tools import BaseTool
 from langchain_core.utils import get_from_dict_or_env
 from langchain_core.utils.function_calling import convert_to_openai_tool
-from langchain_core.tools import BaseTool
-from pydantic import BaseModel, ConfigDict, model_validator, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .utils import (
     convert_dict_to_message,
@@ -51,44 +45,42 @@ class ChatPredictionGuard(BaseChatModel):
 
     client: Any = None
 
-    model: Optional[str] = "Hermes-3-Llama-3.1-8B"
+    model: str | None = "Hermes-3-Llama-3.1-8B"
     """Model name to use."""
-    max_tokens: Optional[int] = 256
+    max_tokens: int | None = 256
     """The maximum number of tokens in the generated completion."""
-    logit_bias: Optional[dict[int, int]] = None
+    logit_bias: dict[int, int] | None = None
     """Modify the likelihood of specified tokens appearing in the completion."""
-    presence_penalty: Optional[float] = None
+    presence_penalty: float | None = None
     """Penalizes repeated tokens."""
-    frequency_penalty: Optional[float] = None
+    frequency_penalty: float | None = None
     """Penalizes repeated tokens according to frequency."""
-    temperature: Optional[float] = 0.75
+    temperature: float | None = 0.75
     """The temperature parameter for controlling randomness in completions."""
-    top_p: Optional[float] = 0.1
+    top_p: float | None = 0.1
     """The diversity of the generated text based on nucleus sampling."""
-    top_k: Optional[int] = None
+    top_k: int | None = None
     """The diversity of the generated text based on top-k sampling."""
-    stop: Optional[Union[list[str], str]] = Field(default=None, alias="stop_sequences")
+    stop: list[str] | str | None = Field(default=None, alias="stop_sequences")
     """Default stop sequences."""
-    predictionguard_input: Optional[Dict[str, Union[str, bool]]] = None
+    predictionguard_input: dict[str, str | bool] | None = None
     """The input check to run over the prompt before sending to the LLM."""
-    predictionguard_output: Optional[Dict[str, bool]] = None
+    predictionguard_output: dict[str, bool] | None = None
     """The output check to run the LLM output against."""
-    predictionguard_api_key: Optional[str] = None
+    predictionguard_api_key: str | None = None
     """Prediction Guard API key."""
-    predictionguard_url: Optional[str] = None
+    predictionguard_url: str | None = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(extra="forbid")
 
     def bind_tools(
         self,
-        tools: Sequence[Union[dict[str, Any], type, Callable, BaseTool]],
+        tools: Sequence[dict[str, Any] | type | Callable | BaseTool],
         *,
-        tool_choice: Optional[
-            Union[dict, str, Literal["auto", "none", "required", "any"], bool]
-        ] = None,
-        strict: Optional[bool] = None,
-        parallel_tool_calls: Optional[bool] = None,
+        tool_choice: dict | str | Literal["auto", "none", "required", "any"] | bool | None = None,
+        strict: bool | None = None,
+        parallel_tool_calls: bool | None = None,
         **kwargs: Any,
     ) -> Runnable[LanguageModelInput, BaseMessage]:
         """Bind tool-like objects to this chat model.
@@ -118,7 +110,7 @@ class ChatPredictionGuard(BaseChatModel):
                 Defaults to ``None`` (no specification, which allows parallel tool use).
             kwargs: Any additional parameters are passed directly to
                 :meth:`~langchain_openai.chat_models.base.ChatOpenAI.bind`.
-        """  # noqa: E501
+        """
 
         if parallel_tool_calls is not None:
             kwargs["parallel_tool_calls"] = parallel_tool_calls
@@ -170,7 +162,7 @@ class ChatPredictionGuard(BaseChatModel):
         return "predictionguard-chat"
 
     @model_validator(mode="before")
-    def validate_environment(cls, values: Dict) -> Dict:
+    def validate_environment(cls, values: dict) -> dict:
         """Validate that api key and python package exists in environment."""
         pg_api_key = get_from_dict_or_env(
             values, "predictionguard_api_key", "PREDICTIONGUARD_API_KEY"
@@ -196,13 +188,13 @@ class ChatPredictionGuard(BaseChatModel):
 
         return values
 
-    def _get_parameters(self, **kwargs: Any) -> Dict[str, Any]:
+    def _get_parameters(self, **kwargs: Any) -> dict[str, Any]:
         # input kwarg conflicts with LanguageModelInput on BaseChatModel
         input = kwargs.pop("predictionguard_input", self.predictionguard_input)
         output = kwargs.pop("predictionguard_output", self.predictionguard_output)
 
         params = {
-            **{
+            
                 "max_tokens": self.max_tokens,
                 "temperature": self.temperature,
                 "presence_penalty": self.presence_penalty,
@@ -216,8 +208,8 @@ class ChatPredictionGuard(BaseChatModel):
                 ),
                 "output": (
                     output.model_dump() if isinstance(output, BaseModel) else output
-                ),
-            },
+                )
+            ,
             **kwargs,
         }
 
@@ -225,8 +217,8 @@ class ChatPredictionGuard(BaseChatModel):
 
     def _stream(
         self,
-        messages: List[BaseMessage],
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        messages: list[BaseMessage],
+        run_manager: CallbackManagerForLLMRun | None = None,
         **kwargs: Any,
     ) -> Iterator[ChatGenerationChunk]:
         message_dicts = [convert_message_to_dict(m) for m in messages]
@@ -253,9 +245,9 @@ class ChatPredictionGuard(BaseChatModel):
 
     def _generate(
         self,
-        messages: List[BaseMessage],
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        stream: Optional[bool] = None,
+        messages: list[BaseMessage],
+        run_manager: CallbackManagerForLLMRun | None = None,
+        stream: bool | None = None,
         **kwargs: Any,
     ) -> ChatResult:
         message_dicts = [convert_message_to_dict(m) for m in messages]

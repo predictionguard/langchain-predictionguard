@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.llms import LLM
@@ -29,36 +29,36 @@ class PredictionGuard(LLM):
 
     client: Any = None  #: :meta private:
 
-    model: Optional[str] = "Hermes-3-Llama-3.1-8B"
+    model: str | None = "Hermes-3-Llama-3.1-8B"
     """Model name to use."""
-    max_tokens: Optional[int] = 256
+    max_tokens: int | None = 256
     """Denotes the number of tokens to predict per generation."""
-    presence_penalty: Optional[float] = None
+    presence_penalty: float | None = None
     """Penalizes repeated tokens."""
-    frequency_penalty: Optional[float] = None
+    frequency_penalty: float | None = None
     """Penalizes repeated tokens according to frequency."""
-    logit_bias: Optional[dict[str, float]] = None
+    logit_bias: dict[str, float] | None = None
     """Adjust the probability of specific tokens being generated."""
-    temperature: Optional[float] = 0.75
+    temperature: float | None = 0.75
     """A non-negative float that tunes the degree of randomness in generation."""
-    top_p: Optional[float] = 0.1
+    top_p: float | None = 0.1
     """A non-negative float that controls the diversity of the generated tokens."""
-    top_k: Optional[int] = None
+    top_k: int | None = None
     """The diversity of the generated text based on top-k sampling."""
-    stop: Optional[List[str]] = None
-    predictionguard_input: Optional[Dict[str, Union[str, bool]]] = None
+    stop: list[str] | None = None
+    predictionguard_input: dict[str, str | bool] | None = None
     """The input check to run over the prompt before sending to the LLM."""
-    predictionguard_output: Optional[Dict[str, bool]] = None
+    predictionguard_output: dict[str, bool] | None = None
     """The output check to run the LLM output against."""
-    predictionguard_api_key: Optional[str] = None
+    predictionguard_api_key: str | None = None
     """Prediction Guard API key."""
-    predictionguard_url: Optional[str] = None
+    predictionguard_url: str | None = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="before")
-    def validate_environment(cls, values: Dict) -> Dict:
+    def validate_environment(cls, values: dict) -> dict:
         """Validate that the api_key and python package exists in environment."""
         pg_api_key = get_from_dict_or_env(
             values, "predictionguard_api_key", "PREDICTIONGUARD_API_KEY"
@@ -85,7 +85,7 @@ class PredictionGuard(LLM):
         return values
 
     @property
-    def _identifying_params(self) -> Dict[str, Any]:
+    def _identifying_params(self) -> dict[str, Any]:
         """Get the identifying parameters."""
         return {"model": self.model}
 
@@ -94,13 +94,13 @@ class PredictionGuard(LLM):
         """Return type of llm."""
         return "predictionguard"
 
-    def _get_parameters(self, **kwargs: Any) -> Dict[str, Any]:
+    def _get_parameters(self, **kwargs: Any) -> dict[str, Any]:
         # input kwarg conflicts with LanguageModelInput on BaseChatModel
         input = kwargs.pop("predictionguard_input", self.predictionguard_input)
         output = kwargs.pop("predictionguard_output", self.predictionguard_output)
 
         params = {
-            **{
+            
                 "max_tokens": self.max_tokens,
                 "temperature": self.temperature,
                 "top_p": self.top_p,
@@ -110,8 +110,8 @@ class PredictionGuard(LLM):
                 ),
                 "output": (
                     output.model_dump() if isinstance(output, BaseModel) else output
-                ),
-            },
+                )
+            ,
             **kwargs,
         }
 
@@ -120,8 +120,8 @@ class PredictionGuard(LLM):
     def _call(
         self,
         prompt: str,
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        stop: list[str] | None = None,
+        run_manager: CallbackManagerForLLMRun | None = None,
         **kwargs: Any,
     ) -> str:
         """Call out to Prediction Guard's model API.

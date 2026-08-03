@@ -1,9 +1,7 @@
 import re
+from collections.abc import Mapping
 from typing import (
     Any,
-    Dict,
-    List,
-    Mapping,
 )
 
 from langchain_core.messages import (
@@ -16,7 +14,8 @@ from langchain_core.messages import (
     ToolMessage,
 )
 
-def enforce_stop_tokens(text: str, stop: List[str]) -> str:
+
+def enforce_stop_tokens(text: str, stop: list[str]) -> str:
     """Cut off the text as soon as any stop words occur."""
     return re.split("|".join(stop), text, maxsplit=1)[0]
 
@@ -37,7 +36,7 @@ def convert_dict_to_message(_dict: Mapping[str, Any]) -> BaseMessage:
         # Fix for azure
         # Also OpenAI returns None for tool invocations
         content = _dict.get("content", "") or ""
-        additional_kwargs: Dict = {}
+        additional_kwargs: dict = {}
         if function_call := _dict.get("function_call"):
             additional_kwargs["function_call"] = dict(function_call)
         if tool_calls := _dict.get("tool_calls"):
@@ -71,7 +70,7 @@ def convert_message_to_dict(message: BaseMessage) -> dict:
     Returns:
         The dictionary.
     """
-    message_dict: Dict[str, Any]
+    message_dict: dict[str, Any]
     if isinstance(message, ChatMessage):
         message_dict = {"role": message.role, "content": message.content}
     elif isinstance(message, HumanMessage):
