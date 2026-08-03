@@ -1,11 +1,12 @@
-from copy import deepcopy
 import logging
-from typing import Any, Optional, Union, Dict, Sequence, List
-import yaml
+from collections.abc import Sequence
+from copy import deepcopy
+from typing import Any
 
-from langchain_core.documents.compressor import BaseDocumentCompressor
+import yaml
 from langchain_core.callbacks.manager import Callbacks
 from langchain_core.documents import Document
+from langchain_core.documents.compressor import BaseDocumentCompressor
 from langchain_core.utils import get_from_dict_or_env
 from pydantic import ConfigDict, model_validator
 
@@ -17,13 +18,13 @@ class PredictionGuardRerank(BaseDocumentCompressor):
     client: Any = None  #: :meta private:
     """Prediction Guard Client"""
 
-    model: Optional[str] = "bge-reranker-v2-m3"
+    model: str | None = "bge-reranker-v2-m3"
     """Model name to use."""
 
-    predictionguard_api_key: Optional[str] = None
+    predictionguard_api_key: str | None = None
     """Prediction Guard API key."""
 
-    predictionguard_url: Optional[str] = None
+    predictionguard_url: str | None = None
     """Prediction Guard API URL."""
 
     model_config = ConfigDict(
@@ -31,7 +32,7 @@ class PredictionGuardRerank(BaseDocumentCompressor):
     )
 
     @model_validator(mode="before")
-    def validate_environment(cls, values: Dict) -> Dict:
+    def validate_environment(cls, values: dict) -> dict:
         """Validate that the api_key and python package exists in environment."""
         pg_api_key = get_from_dict_or_env(
             values, "predictionguard_api_key", "PREDICTIONGUARD_API_KEY"
@@ -61,7 +62,7 @@ class PredictionGuardRerank(BaseDocumentCompressor):
 
     def _document_to_str(
         self,
-        document: Union[str, Document, dict],
+        document: str | Document | dict,
     ) -> str:
         if isinstance(document, Document):
             return document.page_content
@@ -75,17 +76,17 @@ class PredictionGuardRerank(BaseDocumentCompressor):
     def rerank(
         self,
         query: str,
-        documents: Sequence[Union[str, Document, dict]],
+        documents: Sequence[str | Document | dict],
         *,
-        model: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+        model: str | None = None,
+    ) -> list[dict[str, Any]]:
         """Returns an ordered list of documents ordered by their relevance to the provided query.
 
         Args:
             model: The model used for reranking.
             query: The query to use for reranking.
             documents: A sequence of documents to rerank.
-        """  # noqa: E501
+        """
         if len(documents) == 0:  # to avoid empty api call
             return []
         docs = [self._document_to_str(doc) for doc in documents]
@@ -107,7 +108,7 @@ class PredictionGuardRerank(BaseDocumentCompressor):
         self,
         documents: Sequence[Document],
         query: str,
-        callbacks: Optional[Callbacks] = None,
+        callbacks: Callbacks | None = None,
     ) -> Sequence[Document]:
         """
         Compress documents using Prediction Guard's rerank API.
