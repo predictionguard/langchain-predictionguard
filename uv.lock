@@ -5,6 +5,10 @@ requires-python = ">=3.12"
 [options]
 exclude-newer = "2026-07-31T12:33:43Z"
 
+[options.exclude-newer-package]
+markupsafe = false
+predictionguard = "2026-08-03T19:45:44.44Z"
+
 [[package]]
 name = "annotated-types"
 version = "0.8.0"
@@ -218,6 +222,7 @@ source = { editable = "." }
 dependencies = [
     { name = "langchain-core" },
     { name = "predictionguard" },
+    { name = "requests" },
 ]
 
 [package.optional-dependencies]
@@ -228,9 +233,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "langchain-core", specifier = "==1.5.3" },
-    { name = "predictionguard", specifier = "==2.11.1" },
+    { name = "langchain-core", specifier = ">=1.5.3,<2" },
+    { name = "predictionguard", specifier = ">=2.11.2,<3" },
     { name = "pytest", marker = "extra == 'dev'", specifier = "==9.1.1" },
+    { name = "requests", specifier = ">=2.34.2,<3" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.16.1" },
 ]
 provides-extras = ["dev"]
@@ -345,15 +351,15 @@ wheels = [
 
 [[package]]
 name = "predictionguard"
-version = "2.11.1"
+version = "2.11.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
     { name = "tabulate" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0e/1b/de5f71c763f0e74d5c25830c280f3a8bb43860a3732679ade5d6bdd17f7c/predictionguard-2.11.1.tar.gz", hash = "sha256:9b1626de619c0f7f3c449a2c8d2a2b7882f747050d621f4b1bec1e1cbd4527e4", size = 976806, upload-time = "2026-05-04T19:42:46.062Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/bc/a94c50a92fe3a91bc6856c4867c3ec8d857e62541570ce3aa7c1ad1cc80b/predictionguard-2.11.2.tar.gz", hash = "sha256:f00132ef62d0076e7e59c6775d81941d4806da7e3a5abfbc4a7214952258d6a3", size = 975868, upload-time = "2026-08-03T15:01:39.755Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ba/fc/e7108b5eee8c6fef89ae3e95aa1a5ee04459c9c950a73396df8623b11e48/predictionguard-2.11.1-py3-none-any.whl", hash = "sha256:55f1806ac9c9d78f8cf455aa4f57119efb06336971080d9f7d40abc5f196b41d", size = 34903, upload-time = "2026-05-04T19:42:44.44Z" },
+    { url = "https://files.pythonhosted.org/packages/f9/58/61c5bdc0674d4dc1cbd10d365c923c1311daed652f2f9dcb19e5c4de4e3a/predictionguard-2.11.2-py3-none-any.whl", hash = "sha256:5b6526ba4acd495d7ce693131f160a0af43fde77327a34cbfa32c74f43b45a22", size = 34727, upload-time = "2026-08-03T15:01:38.718Z" },
 ]
 
 [[package]]
@@ -519,7 +525,7 @@ wheels = [
 
 [[package]]
 name = "requests"
-version = "2.33.1"
+version = "2.34.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
@@ -527,9 +533,9 @@ dependencies = [
     { name = "idna" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5f/a4/98b9c7c6428a668bf7e42ebb7c79d576a1c3c1e3ae2d47e674b468388871/requests-2.33.1.tar.gz", hash = "sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517", size = 134120, upload-time = "2026-03-30T16:09:15.531Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed", size = 142856, upload-time = "2026-05-14T19:25:27.735Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/8e/7540e8a2036f79a125c1d2ebadf69ed7901608859186c856fa0388ef4197/requests-2.33.1-py3-none-any.whl", hash = "sha256:4e6d1ef462f3626a1f0a0a9c42dd93c63bad33f9f1c1937509b8c5c8718ab56a", size = 64947, upload-time = "2026-03-30T16:09:13.83Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl", hash = "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0", size = 73075, upload-time = "2026-05-14T19:25:26.443Z" },
 ]
 
 [[package]]
