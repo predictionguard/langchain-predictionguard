@@ -1,78 +1,91 @@
 # langchain-predictionguard
 
-This page covers how to use the Prediction Guard ecosystem within LangChain.
-It is broken into two parts: installation and setup, and then references to specific Prediction Guard wrappers.
+> [!WARNING]
+> **This package is deprecated and no longer maintained.** Some features are broken or missing, and no further updates will be released. Existing releases remain installable from PyPI, but you should migrate to `langchain-openai` or `langchain-anthropic` as described below.
 
-## Installation and Setup
+## Migrating
 
-- Install the PredictionGuard Langchain partner package:
+The Prediction Guard API is compatible with both OpenAI-style and Anthropic-style clients, so the standard LangChain integrations work with it directly. Use whichever matches the functionality you need, pointed at the Prediction Guard API with your existing API key.
+
+| This package | Replacement |
+|---|---|
+| `ChatPredictionGuard` | `langchain_openai.ChatOpenAI` or `langchain_anthropic.ChatAnthropic` |
+| `PredictionGuard` (completions) | `langchain_openai.OpenAI` |
+| `PredictionGuardEmbeddings` | `langchain_openai.OpenAIEmbeddings` |
+| `PredictionGuardRerank` | No drop-in replacement; call the Prediction Guard `/rerank` endpoint directly |
+
+### Chat (OpenAI-compatible)
+
+```bash
+pip install langchain-openai
 ```
-pip install langchain-predictionguard
-```
-
-- Get a Prediction Guard API key (as described [here](https://docs.predictionguard.com/)) and set it as an environment variable (`PREDICTIONGUARD_API_KEY`)
-
-## Prediction Guard Langchain Integrations
-|API|Description|Endpoint Docs| Import                                                  | Example Usage                                                                 |
-|---|---|---|---------------------------------------------------------|-------------------------------------------------------------------------------|
-|Chat|Build Chat Bots|[Chat](https://docs.predictionguard.com/api-reference/api-reference/chat-completions)| `from langchain_predictionguard import ChatPredictionGuard` | [ChatPredictionGuard.ipynb](/notebooks/ChatPredictionGuard.ipynb)             |
-|Completions|Generate Text|[Completions](https://docs.predictionguard.com/api-reference/api-reference/completions)| `from langchain_predictionguard import PredictionGuard` | [PredictionGuard.ipynb](/notebooks/PredictionGuard.ipynb)                     |
-|Text Embedding|Embed String to Vectores|[Embeddings](https://docs.predictionguard.com/api-reference/api-reference/embeddings)| `from langchain_predictionguard import PredictionGuardEmbeddings` | [PredictionGuardEmbeddings.ipynb](/notebooks/PredictionGuardEmbeddings.ipynb) |
-
-## Getting Started
-
-## Chat Models
-
-### Prediction Guard Chat
-
-See a [usage example](/notebooks/ChatPredictionGuard.ipynb)
 
 ```python
-from langchain_predictionguard import ChatPredictionGuard
-```
+import os
 
-#### Usage
+from langchain_openai import ChatOpenAI
 
-```python
-# If predictionguard_api_key is not passed, default behavior is to use the `PREDICTIONGUARD_API_KEY` environment variable.
-chat = ChatPredictionGuard(model="Hermes-3-Llama-3.1-8B")
+chat = ChatOpenAI(
+    model="<model-name>",
+    api_key=os.environ["PREDICTIONGUARD_API_KEY"],
+    base_url="https://api.predictionguard.com",
+)
 
 chat.invoke("Tell me a joke")
 ```
 
-## Embedding Models
+### Chat (Anthropic-compatible)
 
-### Prediction Guard Embeddings
-
-See a [usage example](/notebooks/PredictionGuardEmbeddings.ipynb)
-
-```python
-from langchain_predictionguard import PredictionGuardEmbeddings
+```bash
+pip install langchain-anthropic
 ```
 
-#### Usage
 ```python
-# If predictionguard_api_key is not passed, default behavior is to use the `PREDICTIONGUARD_API_KEY` environment variable.
-embeddings = PredictionGuardEmbeddings(model="bridgetower-large-itm-mlm-itc")
+import os
 
-text = "This is an embedding example."
-output = embeddings.embed_query(text)
+from langchain_anthropic import ChatAnthropic
+
+chat = ChatAnthropic(
+    model="<model-name>",
+    api_key=os.environ["PREDICTIONGUARD_API_KEY"],
+    base_url="https://api.predictionguard.com",
+)
+
+chat.invoke("Tell me a joke")
 ```
 
-## LLMs
-
-### Prediction Guard LLM
-
-See a [usage example](/notebooks/PredictionGuard.ipynb)
+### Completions
 
 ```python
-from langchain_predictionguard import PredictionGuard
-```
+import os
 
-#### Usage
-```python
-# If predictionguard_api_key is not passed, default behavior is to use the `PREDICTIONGUARD_API_KEY` environment variable.
-llm = PredictionGuard(model="Hermes-2-Pro-Llama-3-8B")
+from langchain_openai import OpenAI
+
+llm = OpenAI(
+    model="<model-name>",
+    api_key=os.environ["PREDICTIONGUARD_API_KEY"],
+    base_url="https://api.predictionguard.com",
+)
 
 llm.invoke("Tell me a joke about bears")
 ```
+
+### Embeddings
+
+```python
+import os
+
+from langchain_openai import OpenAIEmbeddings
+
+embeddings = OpenAIEmbeddings(
+    model="<model-name>",
+    api_key=os.environ["PREDICTIONGUARD_API_KEY"],
+    base_url="https://api.predictionguard.com",
+    # Send raw text rather than OpenAI tiktoken token IDs.
+    check_embedding_ctx_length=False,
+)
+
+embeddings.embed_query("This is an embedding example.")
+```
+
+For the full list of endpoints and models, see the [Prediction Guard documentation](https://docs.predictionguard.com).
