@@ -4,16 +4,19 @@ build-backend = "hatchling.build"
 
 [project]
 name = "langchain-predictionguard"
-version = "0.3.2"
+version = "0.4.0"
 authors = [
     {name="Jacob Mansdorfer", email="jacob@predictionguard.com"}
 ]
-description = "Create controlled and compliant AI systems with PredictionGuard and LangChain"
+description = "[DEPRECATED] Prediction Guard LangChain integration. No longer maintained; use langchain-openai or langchain-anthropic instead."
 description-file = "README.md"
 readme = "README.md"
 requires-python = ">=3.12"
 license = {file = "LICENSE"}
-classifiers = ["License :: OSI Approved :: MIT License"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 7 - Inactive",
+]
 dependencies = [
     "langchain-core>=1.5.3,<2",
     "predictionguard>=2.11.2,<3",
